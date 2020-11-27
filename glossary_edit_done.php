@@ -10,7 +10,6 @@
 </head>
 <body>
 
-
 <?php
 require_once('db_connect.php');
 
@@ -23,13 +22,20 @@ try
   $category = $_POST['category'];
   $description = $_POST['description'];
 
+  // セキュリティ対策入力値を文字列に変換。出力時にエスケープする
+  // エスケープ忘れ、多重エスケープ、エスケープ前の文字列が必要になった際にhtmlspecialchars_decode()等で元に戻す必要があるため
+  $name = htmlspecialchars($name,ENT_QUOTES,'UTF-8');
+  $reading = htmlspecialchars($reading,ENT_QUOTES,'UTF-8');
+  $category = htmlspecialchars($category,ENT_QUOTES,'UTF-8');
+  $description = htmlspecialchars($description,ENT_QUOTES,'UTF-8');
+
   //データベースに接続
   $dbh = db_connect();
 
   //例外処理。PDOのエラーレポートを表示
   $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // SQL分を使ってレコードを追加
+  // SQL分を使ってレコードを修正
   $sql ='UPDATE contents SET name=?,reading=?,category=?,description=? WHERE name=?'; //$sql ='UPDATE contents SET name=?,reading=?,category=?,description=? WHERE name=?'を変数$sqlに格納する
   $stmt = $dbh->prepare($sql); // レコードを追加する準備。この行は定型文としてこのまま書く
   $data[] = $name; // 一つ目の?にセットしたいデータが入っている変数を書く
