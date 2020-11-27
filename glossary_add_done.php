@@ -17,10 +17,17 @@ require_once('db_connect.php');
 try
 {
   // POSTメソッドで前の画面の入力値を取得する
-  $glossary_name = $_POST['name'];
-  $glossary_reading = $_POST['reading'];
-  $glossary_category = $_POST['category'];
-  $glossary_description = $_POST['description'];
+  $name = $_POST['name'];
+  $reading = $_POST['reading'];
+  $category = $_POST['category'];
+  $description = $_POST['description'];
+
+  // セキュリティ対策入力値を文字列に変換。出力時にエスケープする
+  // エスケープ忘れ、多重エスケープ、エスケープ前の文字列が必要になった際にhtmlspecialchars_decode()等で元に戻す必要があるため
+  $name = htmlspecialchars($name,ENT_QUOTES,'UTF-8');
+  $reading = htmlspecialchars($reading,ENT_QUOTES,'UTF-8');
+  $category = htmlspecialchars($category,ENT_QUOTES,'UTF-8');
+  $description = htmlspecialchars($description,ENT_QUOTES,'UTF-8');
 
   //データベースに接続
   $dbh = db_connect();
@@ -31,24 +38,17 @@ try
   // SQL分を使ってレコードを追加
   $sql ='INSERT INTO contents(name,reading,category,description) VALUES (?,?,?,?)'; //'INSERT INTO mst_staff(name,reading,category,description) VALUES (?,?,?,?)'を変数$sqlに格納する
   $stmt = $dbh->prepare($sql); // レコードを追加する準備。この行は定型文としてこのまま書く
-  $data[] = $glossary_name; // 一つ目の?にセットしたいデータが入っている変数を書く
-  $data[] = $glossary_reading; // 二つ目の?にセットしたいデータが入っている変数を書く
-  $data[] = $glossary_category; // 三つ目の?にセットしたいデータが入っている変数を書く
-  $data[] = $glossary_description; // 四つ目の?にセットしたいデータが入っている変数を書く
+  $data[] = $name; // 一つ目の?にセットしたいデータが入っている変数を書く
+  $data[] = $reading; // 二つ目の?にセットしたいデータが入っている変数を書く
+  $data[] = $category; // 三つ目の?にセットしたいデータが入っている変数を書く
+  $data[] = $description; // 四つ目の?にセットしたいデータが入っている変数を書く
   $stmt->execute($data); // SQL文で指令を出すための命令文。この行は定型文としてこのまま書く
 
   // データベースから切断するプログラム
   $dbh = null;
 
-  // セキュリティ対策入力値を文字列に変換。出力時にエスケープする
-  // エスケープ忘れ、多重エスケープ、エスケープ前の文字列が必要になった際にhtmlspecialchars_decode()等で元に戻す必要があるため
-  $glossary_name = htmlspecialchars($glossary_name,ENT_QUOTES,'UTF-8');
-  $glossary_reading = htmlspecialchars($glossary_reading,ENT_QUOTES,'UTF-8');
-  $glossary_category = htmlspecialchars($glossary_category,ENT_QUOTES,'UTF-8');
-  $glossary_description = htmlspecialchars($glossary_description,ENT_QUOTES,'UTF-8');
-
   //結果を表示
-  print $glossary_name;
+  print $name;
   print 'を追加しました。<br />';
 
 }
